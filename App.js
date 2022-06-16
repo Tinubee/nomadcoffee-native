@@ -1,9 +1,14 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as Font from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
+import { NavigationContainer } from "@react-navigation/native";
+import TabsNav from "./navigators/TabsNav";
+import { ApolloProvider, useReactiveVar } from "@apollo/client";
+import { AsyncStorageWrapper, CachePersistor } from "apollo3-cache-persist";
+import client, { isLoggedInVar, tokenVar } from "./apollo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -17,6 +22,11 @@ export default function App() {
 
   useEffect(() => {
     const preload = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        isLoggedInVar(true);
+        tokenVar(token);
+      }
       try {
         await SplashScreen.preventAutoHideAsync();
         preloadAssets();
@@ -40,17 +50,12 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <ApolloProvider client={client}>
+        <NavigationContainer>
+          <TabsNav />
+        </NavigationContainer>
+      </ApolloProvider>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
