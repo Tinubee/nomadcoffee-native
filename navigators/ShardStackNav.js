@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { isLoggedInVar } from "../apollo";
 import Home from "../screens/Home";
 import Login from "../screens/Login";
+import OtherProfile from "../screens/OtherProfile";
 import Profile from "../screens/Profile";
 import Search from "../screens/Search";
 
@@ -23,12 +24,13 @@ export default function StackNavFactory({ screenName }) {
       }}
     >
       {screenName === "Home" ? (
-        <Stack.Screen name={"Home"} component={Home} />
+        <Stack.Screen name={"Coffee List"} component={Home} />
       ) : null}
       {screenName === "Search" ? (
         <Stack.Screen name="Search" component={Search} />
       ) : null}
       <Stack.Screen name="Profile" component={isLoggedIn ? Profile : Login} />
+      <Stack.Screen name="OtherProfile" component={OtherProfile} />
     </Stack.Navigator>
   );
 }

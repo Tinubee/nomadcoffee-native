@@ -33,7 +33,6 @@ const LogoutButton = styled.TouchableOpacity``;
 export default function MyProfile() {
   const { width, height } = useWindowDimensions();
   const { data } = useMe();
-  console.log(data);
   return (
     <Container style={{ minHeight: height }}>
       <ProfileContainer>
@@ -44,7 +43,7 @@ export default function MyProfile() {
         )}
       </ProfileContainer>
       <LogoutButton onPress={logUserOut}>
-        <Text style={{ color: "white", fontSize: "30px" }}>
+        <Text style={{ color: "white" }}>
           Log Out
           <Ionicons name="log-out-outline" size={30} />
         </Text>

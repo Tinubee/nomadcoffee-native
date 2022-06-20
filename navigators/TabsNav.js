@@ -1,6 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TabIcon from "../components/TabIcon";
-import useMe from "../hooks/useMe";
 import SharedStackNav from "./ShardStackNav";
 
 const Tabs = createBottomTabNavigator();
