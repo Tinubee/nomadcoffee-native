@@ -1,8 +1,18 @@
+import { gql } from "@apollo/client";
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 
+const SEE_PROFILE_QUERY = gql`
+  query seeProfile($username: String!) {
+    seeProfile(username: $username) {
+      id
+      username
+      avatarURL
+    }
+  }
+`;
+
 export default function OtherProfile({ navigation, route }) {
-  console.log(route.params);
   useEffect(() => {
     navigation.setOptions({
       title: route.params.username,

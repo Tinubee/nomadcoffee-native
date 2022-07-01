@@ -4,6 +4,9 @@ import { logUserOut } from "../apollo";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import useMe from "../hooks/useMe";
+import { gql } from "@apollo/client";
+import AuthButton from "./auth/AuthButton";
+import { useNavigation } from "@react-navigation/native";
 
 const Container = styled.View`
   background-color: black;
@@ -13,6 +16,7 @@ const ProfileContainer = styled.View`
   flex-direction: row;
   align-items: center;
   padding: 0px 15px;
+  margin-bottom: 15px;
 `;
 const DefaultAvatar = styled.Image`
   width: 100px;
@@ -28,11 +32,22 @@ const Avatar = styled.Image`
   align-items: center;
   justify-content: center;
 `;
-const LogoutButton = styled.TouchableOpacity``;
+const ButtonContainer = styled.TouchableOpacity`
+  width: 100%;
+  padding: 7px 0px;
+  background-color: black;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+`;
+const ButtonText = styled.Text`
+  color: white;
+`;
 
 export default function MyProfile() {
   const { width, height } = useWindowDimensions();
   const { data } = useMe();
+  const navigation = useNavigation();
   return (
     <Container style={{ minHeight: height }}>
       <ProfileContainer>
@@ -42,12 +57,18 @@ export default function MyProfile() {
           <Avatar source={{ uri: data?.me?.avatarURL }} />
         )}
       </ProfileContainer>
-      <LogoutButton onPress={logUserOut}>
-        <Text style={{ color: "white" }}>
-          Log Out
-          <Ionicons name="log-out-outline" size={30} />
-        </Text>
-      </LogoutButton>
+      <AuthButton text="Log Out" onPress={logUserOut} />
+      <ButtonContainer
+        onPress={() =>
+          navigation.navigate("EditProfile", {
+            username: data?.me?.username,
+            email: data?.me?.email,
+            avatarURL: data?.me?.avatarURL,
+          })
+        }
+      >
+        <ButtonText>Edit Profile</ButtonText>
+      </ButtonContainer>
     </Container>
   );
 }

@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components";
 
 const Container = styled.View``;
-const Header = styled.TouchableOpacity`
+const Header = styled.View`
   padding: 10px;
   flex-direction: row;
   align-items: center;
@@ -12,19 +12,20 @@ const Header = styled.TouchableOpacity`
 `;
 const DefaultAvatar = styled.Image`
   margin-right: 10px;
-  width: 25px;
-  height: 25px;
+  width: 50px;
+  height: 50px;
   border-radius: 12.5px;
 `;
 const UserAvatar = styled.Image`
   margin-right: 10px;
-  width: 25px;
-  height: 25px;
+  width: 50px;
+  height: 50px;
   border-radius: 12.5px;
 `;
 const Username = styled.Text`
   color: white;
   font-weight: 600;
+  font-size: 21px;
 `;
 const Category = styled.View`
   flex-direction: row;
@@ -49,50 +50,69 @@ const CoffeeShopNameText = styled.Text`
   font-size: 18px;
 `;
 const File = styled.Image``;
-const ShopBtn = styled.TouchableOpacity`
-  background-color: #e7ecf0;
-  padding: 3px 10px;
+const EditBtn = styled.TouchableOpacity`
+  background-color: #189bf2;
+  padding: 10px 15px;
   border-radius: 5px;
-  margin-right: 20px;
+  margin-left: 30px;
 `;
-const ShopText = styled.Text`
-  color: black;
+const EditBtnText = styled.Text`
+  color: white;
+  font-weight: 600;
+`;
+const goToProfile = () => {
+  navigation.navigate("OtherProfile", {
+    username: user.username,
+    id: user.id,
+  });
+};
+const ShopAdress = styled.View`
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 20px;
+`;
+const ShopAdressText = styled.Text`
+  color: white;
+  font-size: 18px;
   font-weight: 600;
 `;
 
-export default function Photo({ id, name, user, photos, categories, isMine }) {
+export default function ShopInfo({
+  data,
+  id,
+  name,
+  longitude,
+  latitude,
+  category,
+}) {
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
+  //console.log(category[0].category);
 
-  //console.log(user);
-
-  const goToProfile = () => {
-    navigation.navigate("OtherProfile", {
-      username: user.username,
-      id: user.id,
-    });
-  };
-
-  const goToCoffeeShop = () => {
-    navigation.navigate("CoffeeShop", {
+  const goToEditCoffee = () => {
+    navigation.navigate("EditCoffee", {
       id,
       name,
-      user,
-      photos,
-      categories,
-      isMine,
+      longitude,
+      latitude,
+      category,
     });
   };
-  //useEffect(() => {}, [isMine]);
+
   return (
     <Container>
-      <Header onPress={goToProfile}>
-        {user.avatarURL === null ? (
+      <Header>
+        {data?.user?.avatarURL === null ? (
           <DefaultAvatar source={require("../assets/default_profile.png")} />
         ) : (
-          <UserAvatar source={{ uri: user.avatarURL }} />
+          <UserAvatar source={{ uri: data?.user?.avatarURL }} />
         )}
-        <Username>{user.username}</Username>
+        <Username>등록자 : {data?.user.username}</Username>
+        {data?.isMine ? (
+          <EditBtn onPress={goToEditCoffee}>
+            <EditBtnText>수정하기</EditBtnText>
+          </EditBtn>
+        ) : null}
       </Header>
       <File
         resizeMode="cover"
@@ -100,19 +120,21 @@ export default function Photo({ id, name, user, photos, categories, isMine }) {
           width,
           height: width,
         }}
-        source={{ uri: photos[0].url }}
+        source={{ uri: data?.photos[0]?.url }}
       />
       <CoffeeShopName>
-        <CoffeeShopNameText>카페이름 : {name}</CoffeeShopNameText>
-        <ShopBtn onPress={goToCoffeeShop}>
-          <ShopText>자세히보기</ShopText>
-        </ShopBtn>
+        <CoffeeShopNameText>카페이름 : {data?.name}</CoffeeShopNameText>
       </CoffeeShopName>
       <Category>
         <CategoryText>
-          카테고리 : {categories.map((item) => item.category)}
+          카테고리 : {data?.categories.map((item) => item.category)}
         </CategoryText>
       </Category>
+      <ShopAdress>
+        <ShopAdressText>
+          카페위치(좌표) : {data?.latitude} , {data?.longitude}
+        </ShopAdressText>
+      </ShopAdress>
     </Container>
   );
 }

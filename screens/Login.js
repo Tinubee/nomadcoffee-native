@@ -5,6 +5,9 @@ import AuthButton from "../components/auth/AuthButton";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { logUserIn } from "../apollo";
+import { useNavigation } from "@react-navigation/native";
+import styled from "styled-components";
+import { colors } from "../colors";
 
 const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -12,8 +15,20 @@ const LOGIN_MUTATION = gql`
       ok
       token
       error
+      username
     }
   }
+`;
+
+const Signup = styled.TouchableOpacity`
+  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SignupText = styled.Text`
+  color: ${colors.blue};
+  font-size: 14px;
 `;
 
 export default function Login({ route: { params } }) {
@@ -23,13 +38,15 @@ export default function Login({ route: { params } }) {
       username: params?.username,
     },
   });
+  const navigation = useNavigation();
   const passwordRef = useRef();
   const onCompleted = async (data) => {
     const {
-      login: { ok, token, error },
+      login: { ok, token, error, username },
     } = data;
+
     if (ok) {
-      await logUserIn(token);
+      await logUserIn(token, username);
     } else {
       alert(error);
     }
@@ -54,6 +71,11 @@ export default function Login({ route: { params } }) {
     register("username", { required: true });
     register("password", { required: true });
   }, [register]);
+
+  const goToCreateAccount = () => {
+    navigation.navigate("CreateAccount");
+  };
+
   return (
     <AuthLayout>
       <TextInput
@@ -82,6 +104,9 @@ export default function Login({ route: { params } }) {
         disabled={!watch("username") || !watch("password")}
         onPress={handleSubmit(onValid)}
       />
+      <Signup onPress={goToCreateAccount}>
+        <SignupText>Sign Up</SignupText>
+      </Signup>
     </AuthLayout>
   );
 }

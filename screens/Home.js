@@ -1,12 +1,15 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { FlatList, RefreshControl } from "react-native";
 import Photo from "../components/Photo";
 import ScreenLayout from "../components/ScreenLayout";
+import styled from "styled-components";
 
 export const HOME_QUERY = gql`
   query seeCoffeeShops($offset: Int!) {
     seeCoffeeShops(offset: $offset) {
+      id
       name
       user {
         id
@@ -21,12 +24,16 @@ export const HOME_QUERY = gql`
       categories {
         category
       }
+      isMine
     }
   }
 `;
-
+const Seperator = styled.View`
+  height: 20px;
+`;
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
+  const isFocused = useIsFocused();
   const { data, loading, refetch, fetchMore } = useQuery(HOME_QUERY, {
     variables: { offset: 0 },
   });
@@ -35,6 +42,16 @@ export default function Home() {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
+  };
+
+  useEffect(() => {
+    return async () => {
+      await refetch();
+    };
+  }, [isFocused]);
+
+  const renderItem = ({ item }) => {
+    return <Photo {...item} />;
   };
 
   return (
@@ -58,7 +75,7 @@ export default function Home() {
         }
         style={{ width: "100%" }}
         data={data?.seeCoffeeShops}
-        renderItem={({ item }) => <Photo {...item} />}
+        renderItem={renderItem}
       />
     </ScreenLayout>
   );

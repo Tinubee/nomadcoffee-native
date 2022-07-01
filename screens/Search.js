@@ -51,9 +51,7 @@ export default function Search() {
 
   const onSubmit = () => {
     if (word === "") return;
-
     refetch();
-    console.log(data);
   };
   const [refreshing, setRefreshing] = useState(false);
   const refresh = async () => {
