@@ -62,6 +62,7 @@ export default function EditProfile({ route, navigation }) {
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       username: route?.params?.username,
+      email: route?.params?.email,
     },
   });
 
@@ -121,7 +122,6 @@ export default function EditProfile({ route, navigation }) {
           placeholderTextColor="rgba(255,255,255, 0.8)"
           returnKeyType="next"
           onChangeText={(text) => setValue("email", text)}
-          onSubmitEditing={handleSubmit(onValid)}
         />
         <EditButton onPress={handleSubmit(onValid)}>
           <ButtonText>Edit Profile</ButtonText>

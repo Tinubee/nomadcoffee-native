@@ -7,6 +7,7 @@ const ME_QUERY = gql`
     me {
       id
       username
+      email
       avatarURL
       totalFollowing
       totalFollowers
